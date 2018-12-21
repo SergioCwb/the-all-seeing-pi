@@ -7,10 +7,13 @@ from itertools import cycle
 # EDIT THESE VALUES ------------------------
 overlays_dir = "/home/pi/allseeingpi/overlays"
 overlays = ['girl', 'cowboy', 'top', 'pink', 'glassesnose', 'moustache', 'sunglasses', 'elvis', 'emo', 'blackhat', 'emo2', 'baseball', 'flowers', 'santa', 'alps', 'mop', 'glasses']
+overlay_count_dir = "/home/pi/allseeingpi/count"
+overlays_count = ['3', '2', '1']
 # ------------------------------------------
 
 
 overlay = overlays[0] # Starting value
+overlay_c = overlays_count[0] # Starting value
 
 def _get_overlay_image(overlay):
     
@@ -60,5 +63,27 @@ def output_overlay(output=None, overlay=None):
     # Combine the two and save the image as output
     new_output = Image.alpha_composite(output_img, overlay_img)
     new_output.save(output)
+	
+def countdown_overlay(camera=None, overlay=None):
+
+	collection = ['3', '2', '1']
+	for i in collection:
+
+		# pega a primeira imagem
+		img = Image.open(overlay_count_dir + "/" + i + ".png")
+
+		# Pad it to the right resolution
+		pad = Image.new('RGB', _pad(camera.resolution))
+		pad.paste(img, (0, 0))
+
+		# Add the overlay
+		camera.add_overlay(pad.tobytes(), alpha=128, layer=5)
+		
+		# wait 1 second
+		time.sleep(1)
+		
+		#remove last overlay
+		remove_overlays(camera) # alterar para remover apenas o overlay da contagem
+		
 
 all_overlays = cycle(overlays)

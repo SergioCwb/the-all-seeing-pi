@@ -1,10 +1,9 @@
 from picamera import PiCamera
 from gpiozero import Button
 from overlay_functions import *
-from time import gmtime, strftime
+from time import gmtime, strftime, time
 from guizero import App, PushButton, Text, Picture
 from twython import Twython
-import time
 from auth import (
     consumer_key,
     consumer_secret,
@@ -21,8 +20,11 @@ def next_overlay():
 # Tell the take picture button what to do
 def take_picture():
     global output
-    output = strftime("/home/pi/allseeingpi/image-%d-%m %H:%M.png", gmtime())
-    time.sleep(3) # wait 3 seconds to avoid blurry pictures when pressing the button
+    output = strftime("/home/pi/allseeingpi/image-%d-%m_%H:%M.png", gmtime())
+	
+	# add a delay to take the picture
+	time.sleep(3) # depois countdown_overlay
+	
     camera.capture(output)
     camera.stop_preview()
     remove_overlays(camera)
@@ -76,9 +78,9 @@ output = ""
 latest_photo = '/home/pi/allseeingpi/latest.gif'
 
 app = App("The All Seeing Pi", 800, 480)
-#app.tk.attributes("-fullscreen", True)
+#app.attributes("-fullscreen", True)
 message = Text(app, "I spotted you!")
 your_pic = Picture(app, latest_photo)
 new_pic = PushButton(app, new_picture, text="New picture")
-tweet_pic = PushButton(app, send_tweet, text="Tweet picture")
+# tweet_pic = PushButton(app, send_tweet, text="Tweet picture")
 app.display()
